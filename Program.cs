@@ -19,6 +19,7 @@ namespace DataAcess
                 //DeleteCategory(connection);
                 //CreateManyCategory(connection);
                 //ListCategories(connection);
+                //GetCategories(connection);
             }
             
         }
@@ -30,6 +31,14 @@ namespace DataAcess
             {
                 Console.WriteLine($"{item.Id} - {item.Title}");
             }
+        }
+
+        static void GetCategories(SqlConnection connection)
+        {
+            var category = connection.QueryFirstOrDefault<Category>(
+                "SELECT TOP 1 [Id], [Title] FROM [Category] WHERE [Id] = @Id", 
+                new {Id = "af3407aa-11ae-4621-a2ef-2028b85507c4"});
+            Console.WriteLine($"{category.Id} - {category.Title}");
         }
 
         static void CreateCategory(SqlConnection connection)
