@@ -17,7 +17,8 @@ namespace DataAcess
                 //ListCategories(connection);
                 //CreateCategory(connection);
                 //DeleteCategory(connection);
-                
+                //CreateManyCategory(connection);
+                //ListCategories(connection);
             }
             
         }
@@ -67,6 +68,54 @@ namespace DataAcess
             var deleteQuery = "DELETE FROM [Category] WHERE [Id] = @id";
             var rows = connection.Execute(deleteQuery, new { id = new Guid("a86d3f41-7e8a-4d9d-94ea-1b2a48d9f9ba"), });
             Console.WriteLine($"Rows deleted {rows} excluido affected");
+        }
+        
+        static void CreateManyCategory(SqlConnection connection)
+        {
+            var category = new Category();
+            category.Id = Guid.NewGuid();
+            category.Title = "Amazon AWS";
+            category.Url = "Amazon";
+            category.Description = "Category for services AWS";
+            category.Order = 8;
+            category.Summary = "AWS Cloud";
+            category.Featured = false;  
+            
+            var category2 = new Category();
+            category2.Id = Guid.NewGuid();
+            category2.Title = "Category new";
+            category2.Url = "Category new";
+            category2.Description = "Category new";
+            category2.Order = 9;
+            category2.Summary = "Category-new";
+            category2.Featured = true;
+            
+            
+            var insertSql = @"INSERT INTO[Category] VALUES(@Id, @Title, @Url, @Summary, @Order, @Description, @Featured)";
+            var rows = connection.Execute(insertSql, new []
+            { 
+                new
+                {
+                    category.Id,
+                    category.Title,
+                    category.Url,
+                    category.Summary,
+                    category.Order,
+                    category.Description,
+                    category.Featured
+                },
+                new
+                {
+                    category2.Id,
+                    category2.Title,
+                    category2.Url,
+                    category2.Summary,
+                    category2.Order,
+                    category2.Description,
+                    category2.Featured
+                }
+            });
+            Console.WriteLine($"Rows affected: {rows}");
         }
     }
 }
