@@ -9,14 +9,15 @@ namespace DataAcess
         static void Main(string[] args)
         {
             const string connectionString = "Server=localhost,1433;Database=balta;User ID=sa;Password=1q2w3e4r@#$; TrustServerCertificate=True;";
-           
 
             using (var connection = new SqlConnection(connectionString))
             {
                 Console.WriteLine("Connecting to database...");
-                UpdateCategory(connection);
-                ListCategories(connection);
-                // CreateCategory(connection);
+                //UpdateCategory(connection);
+                //ListCategories(connection);
+                //CreateCategory(connection);
+                //DeleteCategory(connection);
+                
             }
             
         }
@@ -40,17 +41,7 @@ namespace DataAcess
             category.Order = 8;
             category.Summary = "AWS Cloud";
             category.Featured = false;
-            var insertSql = @"INSERT INTO 
-                                [Category] 
-                            VALUES(
-                                @Id, 
-                                @Title, 
-                                @Url, 
-                                @Summary, 
-                                @Order, 
-                                @Description, 
-                                @Featured
-                                )";
+            var insertSql = @"INSERT INTO[Category] VALUES(@Id, @Title, @Url, @Summary, @Order, @Description, @Featured)";
             var rows = connection.Execute(insertSql, new
             {
                 category.Id,
@@ -66,9 +57,16 @@ namespace DataAcess
 
         static void UpdateCategory(SqlConnection connection)
         {
-            var updateQuery = "UPDATE [Category] SET Title = @Title WHERE Id = @Id";
-            var rows = connection.Execute(updateQuery, new { id = new Guid("af3407aa-11ae-4621-a2ef-2028b85507c4 "), title = "Front-end 2021" });
+            var updateQuery = "UPDATE [Category] SET [Title] = @Title WHERE [Id] = @id";
+            var rows = connection.Execute(updateQuery, new { id = new Guid("af3407aa-11ae-4621-a2ef-2028b85507c4"), title = "Front-end 2021" });
             Console.WriteLine($"Rows att {rows} affected");
+        }
+
+        static void DeleteCategory(SqlConnection connection)
+        {
+            var deleteQuery = "DELETE FROM [Category] WHERE [Id] = @id";
+            var rows = connection.Execute(deleteQuery, new { id = new Guid("a86d3f41-7e8a-4d9d-94ea-1b2a48d9f9ba"), });
+            Console.WriteLine($"Rows deleted {rows} excluido affected");
         }
     }
 }
