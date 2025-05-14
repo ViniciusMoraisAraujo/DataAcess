@@ -21,7 +21,8 @@ namespace DataAcess
                 //ListCategories(connection);
                 //GetCategories(connection);
                 //ExecuteProcedure(connection);
-                ExecuteReadProcedure(connection);
+                //ExecuteReadProcedure(connection);
+                ExecuteScalar(connection);
             }
             
         }
@@ -146,6 +147,28 @@ namespace DataAcess
             {
                 Console.WriteLine($"{category.Id} - {category.Title}");
             }
+        }
+
+        static void ExecuteScalar(SqlConnection connection)
+        {
+            var category = new Category();
+            category.Title = "Amazon AWS";
+            category.Url = "Amazon";
+            category.Description = "Category for services AWS";
+            category.Order = 8;
+            category.Summary = "AWS Cloud";
+            category.Featured = false;
+            var insertSql = @"INSERT INTO [Category] OUTPUT inserted.[Id] VALUES(NEWID(), @Title, @Url, @Summary, @Order, @Description, @Featured)";
+            var guid = connection.ExecuteScalar<Guid>(insertSql, new
+            {
+                category.Title,
+                category.Url,
+                category.Summary,
+                category.Order,
+                category.Description,
+                category.Featured
+            });
+            Console.WriteLine($"Category Id: {guid}");
         }
     }
 }
