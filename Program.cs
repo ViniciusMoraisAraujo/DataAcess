@@ -20,7 +20,8 @@ namespace DataAcess
                 //CreateManyCategory(connection);
                 //ListCategories(connection);
                 //GetCategories(connection);
-                ExecuteProcedure(connection);
+                //ExecuteProcedure(connection);
+                ExecuteReadProcedure(connection);
             }
             
         }
@@ -134,6 +135,17 @@ namespace DataAcess
             var pars = new {StudentId = "8df494de-9488-440a-b789-077df6e45ffe"};
             var affectedRows = connection.Execute(procedure, pars, commandType: System.Data.CommandType.StoredProcedure);
             Console.WriteLine($"Affected Rows: {affectedRows}");
+        }
+
+        static void ExecuteReadProcedure(SqlConnection connection)
+        {
+            var procedure = "[spGetCoursesByCategory]";
+            var pars = new { CategoryId = "09ce0b7b-cfca-497b-92c0-3290ad9d5142" };
+            var courses = connection.Query<Category>(procedure, pars, commandType: System.Data.CommandType.StoredProcedure);
+            foreach (var category in courses)
+            {
+                Console.WriteLine($"{category.Id} - {category.Title}");
+            }
         }
     }
 }
