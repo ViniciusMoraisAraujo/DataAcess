@@ -20,6 +20,7 @@ namespace DataAcess
                 //CreateManyCategory(connection);
                 //ListCategories(connection);
                 //GetCategories(connection);
+                ExecuteProcedure(connection);
             }
             
         }
@@ -125,6 +126,14 @@ namespace DataAcess
                 }
             });
             Console.WriteLine($"Rows affected: {rows}");
+        }
+
+        static void ExecuteProcedure(SqlConnection connection) //leitura
+        {
+            var procedure = "[spDeleteStudent]";
+            var pars = new {StudentId = "8df494de-9488-440a-b789-077df6e45ffe"};
+            var affectedRows = connection.Execute(procedure, pars, commandType: System.Data.CommandType.StoredProcedure);
+            Console.WriteLine($"Affected Rows: {affectedRows}");
         }
     }
 }
