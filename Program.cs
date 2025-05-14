@@ -23,7 +23,8 @@ namespace DataAcess
                 //ExecuteProcedure(connection);
                 //ExecuteReadProcedure(connection);
                 //ExecuteScalar(connection);
-                ReadView(connection);
+                //ReadView(connection);
+                OneToOne(connection);
             }
             
         }
@@ -179,6 +180,18 @@ namespace DataAcess
             foreach (var item in courses)
             {
                 Console.WriteLine($"{item.Id} - {item.Title}");
+            }
+        }
+
+        static void OneToOne(SqlConnection connection)
+        {
+            var sql = @"SELECT * FROM [CareerItem] INNER JOIN [Course] ON [CareerItem].[CourseId] = [Course].[Id]";
+            var courses = connection.Query<CareerItem, Course, CareerItem>(sql, 
+                (careerItem,course) => {careerItem.Course = course;return careerItem; }, splitOn:"Id");
+            
+            foreach (var item in courses)
+            {
+                Console.WriteLine($"Career: {item.Title} -  Course: {item.Course.Title}");
             }
         }
     }
