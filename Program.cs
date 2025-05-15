@@ -24,11 +24,11 @@ namespace DataAcess
                 //ExecuteReadProcedure(connection);
                 //ExecuteScalar(connection);
                 //ReadView(connection);
-                OneToOne(connection);
+                //OneToOne(connection);
+                OneToMany(connection);
             }
-            
         }
-
+        
         static void ListCategories(SqlConnection connection)
         {
             var categories = connection.Query<Category>("SELECT [Id], [Title] FROM [Category]");
@@ -192,6 +192,40 @@ namespace DataAcess
             foreach (var item in courses)
             {
                 Console.WriteLine($"Career: {item.Title} -  Course: {item.Course.Title}");
+            }
+        }
+
+        static void OneToMany(SqlConnection connection)
+        {
+            var sql = @"SELECT [Career].[Id], [Career].[Title], [CareerItem].[CareerId], [CareerItem].[Title]
+                        FROM [Career] INNER JOIN [CareerItem] ON [CareerItem].[CareerId] = [Career].[Id]
+                        ORDER BY [Career].[Title]";
+
+            var careers = new List<Career>();
+            var  items = connection.Query<Career, CareerItem, Career>(sql,
+                (career, careerItem) =>
+                {
+                    var car = careers.Where(x => x.Id == career.Id).FirstOrDefault();
+                    if (car == null)
+                    {
+                         car = career;
+                         car.Items.Add(careerItem);
+                         careers.Add(car);
+                    }
+                    else
+                    {
+                        car.Items.Add(careerItem);
+                    }
+                    return career;
+                }, splitOn:"CareerId");
+
+            foreach (var career in careers)
+            {
+                Console.WriteLine($"{career.Title}");
+                foreach (var item in career.Items)
+                {
+                    Console.WriteLine($" - {item.Title}");
+                }
             }
         }
     }
