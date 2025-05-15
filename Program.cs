@@ -28,7 +28,8 @@ namespace DataAcess
                 //OneToMany(connection);
                 //QueryMultiple(connection);
                 //SelectIn(connection);
-                Like(connection, "api");
+                //Like(connection, "api");
+                Transaction(connection);
             }
         }
         
@@ -135,7 +136,7 @@ namespace DataAcess
             Console.WriteLine($"Rows affected: {rows}");
         }
 
-        static void ExecuteProcedure(SqlConnection connection) //leitura
+        static void ExecuteProcedure(SqlConnection connection) 
         {
             var procedure = "[spDeleteStudent]";
             var pars = new {StudentId = "8df494de-9488-440a-b789-077df6e45ffe"};
@@ -275,6 +276,37 @@ namespace DataAcess
             foreach (var item in items)
             {
                 Console.WriteLine($"{item.Id} - {item.Title}");
+            }
+        }
+
+        static void Transaction(SqlConnection connection)
+        {
+            var category = new Category();
+            category.Id = Guid.NewGuid();
+            category.Title = "n quero salvar";
+            category.Url = "Amazon";
+            category.Description = "Category for services AWS";
+            category.Order = 8;
+            category.Summary = "AWS Cloud";
+            category.Featured = false;
+            var insertSql = @"INSERT INTO[Category] VALUES(@Id, @Title, @Url, @Summary, @Order, @Description, @Featured)";
+            using (var transaaction = connection.BeginTransaction())
+            {
+                connection.Open();
+                var rows = connection.Execute(insertSql, new
+                {
+                    category.Id,
+                    category.Title,
+                    category.Url,
+                    category.Summary,
+                    category.Order,
+                    category.Description,
+                    category.Featured
+                }, transaaction);
+                //transaaction.Commit();
+                //transaaction.Rollback();
+                Console.WriteLine($"Rows affected: {rows}");
+
             }
         }
     }
